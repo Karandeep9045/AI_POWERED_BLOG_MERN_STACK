@@ -2,7 +2,7 @@ import React from 'react'
 import Blog from '../../pages/Blog'
 import { assets } from '../../assets/assets';
 
-export default function BlogTableItem(blog, fetchBlogs, index) {
+export default function BlogTableItem({ blog, fetchBlogs, index }) {
 
     const { title, createdAt } = blog;
     const BlogDate = new Date(createdAt)
