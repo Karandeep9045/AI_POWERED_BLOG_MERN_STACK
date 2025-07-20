@@ -9,9 +9,6 @@ export const addBlog = async (req, res) => {
         const { title, subTitle, description, category, isPublished } = JSON.parse(req.body.blog);
         const imageFile = req.file;
 
-        console.log(imageFile)
-        console.log("imageFile")
-
         // console.log(title, subTitle, description, category, isPublished)
 
         if (!title || !description || !category || !imageFile) {
@@ -26,8 +23,6 @@ export const addBlog = async (req, res) => {
             fileName: imageFile.originalname,
             folder: "/blogs"
         })
-        console.log(response)
-        console.log("response")
 
         //optimization through imagekit url transformation
         const optimizedImageUrl = imagekit.url({
@@ -40,12 +35,8 @@ export const addBlog = async (req, res) => {
             ]
         });
 
-        console.log(optimizedImageUrl)
-        console.log("optimizedImageUrl")
-
         const image = optimizedImageUrl;
-        console.log(image)
-        console.log("image")
+
         await Blog.create({ title, subTitle, description, category, image, isPublished })
         res.json({ success: true, message: "Blog Added Successfully" })
 
@@ -116,11 +107,9 @@ export const addComment = async (req, res) => {
 export const getBlogComments = async (req, res) => {
     try {
         const {blogId} = req.params;
-        console.log(blogId)
         const comments = await Comment.find({ blog: blogId, isApproved: true}).sort
         ({createdAt:-1});
         if(comments.length === 0){
-            console.log("No comments found")
             return res.json({ success: true, comments: [] })
         }
         res.json({ success: true, comments })
