@@ -14,10 +14,10 @@ export default function AddBlog() {
   const editorRef = useRef(null)
   const quillRef = useRef(null)
 
-  const [image, setImage] = useState(false);
+  const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
-  const [category, setCategory] = useState('Startup');
+  const [category, setCategory] = useState('');
   const [isPublished, setIsPublished] = useState(false);
 
   const generateContent = async () => {
@@ -46,6 +46,7 @@ export default function AddBlog() {
         title, subTitle, description: quillRef.current.root.innerHTML,
         category, isPublished
       }
+      // console.log(blog)
       const formData = new FormData();
       formData.append('blog', JSON.stringify(blog))
       formData.append('image', image)
@@ -54,10 +55,12 @@ export default function AddBlog() {
 
       if (data.success) {
         toast.success(data.message);
-        setImage(false);
+        setImage(null);
         setTitle('')
         quillRef.current.root.innerHTML = ''
-        setCategory('Startup')
+        setCategory('')
+        setIsPublished(false)
+        setSubTitle('')
       }
       else {
         toast.error(data.message)
@@ -65,7 +68,7 @@ export default function AddBlog() {
     } catch (error) {
       toast.error(error.message)
     } finally {
-      isAdding(false)
+      setIsAdding(false)
     }
   }
 
@@ -81,7 +84,7 @@ export default function AddBlog() {
 
         <p>Upload thumbnail</p>
         <label htmlFor="image">
-          <img src={!image ? assets.upload_area : URL.createObjectURL(image)} alt="" className='mt-2 h-16 rounded cursor-pointer' />
+          <img src={image ? URL.createObjectURL(image) : assets.upload_area} alt="" className='mt-2 h-16 rounded cursor-pointer' />
           <input onChange={(e) => setImage(e.target.files[0])} type="file" id='image' hidden required />
         </label>
 
@@ -101,10 +104,14 @@ export default function AddBlog() {
 
           {loading && (
             <div className='absolute right-0 top-0 bottom-0 left-0 flex 
-            items-center justify-center bg-black/10 mt-2'>
-              <div className='w-8 h-8 rounded-full borfder-2 border-t-white
-               animate-spin'></div>
-
+            items-center justify-center bg-black/20 mt-2'>
+              <div className='relative w-16 h-16'>
+                <div className='absolute w-full h-full border-4 border-primary/20 rounded-full'></div>
+                <div className='absolute w-full h-full border-4 border-primary rounded-full 
+                border-t-transparent animate-spin'></div>
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                text-primary font-medium'></div>
+              </div>
             </div>)}
 
           <button disabled={loading} type='button' onClick={generateContent} className='absolute bottom-1 right-2 ml-2 text-xs
@@ -113,7 +120,7 @@ export default function AddBlog() {
         </div>
 
         <p className='mt-4 '>Blog category </p>
-        <select onChange={e => setCategory(e, target.value)} name="category" className='mt-2
+        <select onChange={e => setCategory(e.target.value)} name="category" className='mt-2
          px-3 py-2 border text-gray-500 border-gray-300 outline-none rounded' id="">
           <option value="">Select category </option>
           {blogCategories.map((item, index) => {
@@ -128,7 +135,8 @@ export default function AddBlog() {
         </div>
 
         <button disabled={isAdding} type="submit" className='mt-8 w-40 h-10 bg-primary text-white 
-        rounded cursor-pointer text-sm'> {isAdding ? 'Adding...' : 'Add Blog'} </button>
+        rounded cursor-pointer text-sm'> {isAdding ? 'Adding...' : 'Add Blog'}
+        </button>
 
       </div>
     </form>
