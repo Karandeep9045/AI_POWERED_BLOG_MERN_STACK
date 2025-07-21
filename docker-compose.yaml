@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: blog-frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - blog_network
+
+  backend:
+    build: ./backend
+    container_name: blog-backend 
+    ports:
+      - "8000:8000"
+    networks:
+      - blog_network
+    depends_on:
+      - db
+
+  db:
+    image: mongo:latest
+    container_name: blog-db
+    ports:
+      - "27017:27017"
+    networks:
+      - blog_network
+    volumes:
+      - "C:/Users/singh/OneDrive/Documents/AI-Blog-Database/DB:/data/db"
+networks:
+  blog_network:
+    driver: bridge
+
+
+
+  
